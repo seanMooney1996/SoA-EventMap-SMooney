@@ -1,0 +1,63 @@
+# Build folders
+bin/
+obj/
+out/
+Debug/
+Release/
+
+# Visual Studio user-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# ASP.NET / Blazor specific
+wwwroot/*.gz
+wwwroot/*.br
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# .NET specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+.nuget/
+*.dll
+*.exe
+*.pdb
+*.dbmdl
+
+# Publish output
+publish/
+dist/
+
+# Secrets and environment
+appsettings.Development.json
+appsettings.Local.json
+*.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
