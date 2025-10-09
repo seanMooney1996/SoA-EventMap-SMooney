@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "SoAEventFinder/1.0.0": {
+        "runtime": {
+          "SoAEventFinder.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SoAEventFinder/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
