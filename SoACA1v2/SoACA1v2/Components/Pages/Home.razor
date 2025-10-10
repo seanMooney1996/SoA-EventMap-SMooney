@@ -1,0 +1,23 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject IConfiguration Configuration
+<GoogleMap ApiKey="@ApiKey"
+           Center="new GoogleMapCenter(-34.397, 150.644)"
+           Height="400"
+           Width="100"
+           Zoom="8" />
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+@code {
+    private string ApiKey = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
+    }
+}
