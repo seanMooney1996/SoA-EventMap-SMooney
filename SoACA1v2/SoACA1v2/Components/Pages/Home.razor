@@ -1,15 +1,27 @@
 ﻿@page "/"
 @inject TicketMasterClient TicketMasterClient
+@using System.Text.Json
 @using SoACA1v2.DataModels
 @using SoACA1v2.Services
 @rendermode InteractiveServer
 @inject IConfiguration Configuration
+@inject IWebHostEnvironment Env
+
 <GoogleMap ApiKey="@ApiKey"
            Center="new GoogleMapCenter(-34.397, 150.644)"
            Height="400"
            Width="100"
            Zoom="8" />
+
 <PageTitle>Home</PageTitle>
+
+<AutoComplete @bind-Value="SelectedGenreName"
+              TItem="GenreItem"
+              DataProvider="GenresDataProvider"
+              PropertyName="Name"
+              Placeholder="Search a genre..."
+              OnChanged="OnGenreSelected" />
+
 <h1>Ticketmaster Events</h1>
 
 @if (IsLoading)
@@ -36,14 +48,59 @@ else
 
 
 @code {
+    private AutoComplete<GenreItem> autoComplete1 = default!;
+    private string genre = "";
     private string ApiKey = string.Empty;
     private List<Events>? Events;
+    private List<GenreItem> GenreList = new();
+    private GenreItem? SelectedGenre;
+    private string? SelectedGenreName;
     private bool IsLoading = true;
     private string? ErrorMessage;
     
     protected override async Task OnInitializedAsync()
     {
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
+        await LoadGenres();
+        await LoadEvents();
+    }
+
+    private async Task LoadGenres()
+    {
+        try
+        {
+            var filePath = Path.Combine(Env.WebRootPath, "genre_name_to_id.json");
+            var json = await File.ReadAllTextAsync(filePath);
+            var genreMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+            if (genreMap is not null)
+            {
+                GenreList = genreMap.Select(g => new GenreItem { Name = g.Key, Id = g.Value }).ToList();
+                Console.WriteLine($"✅ Loaded {GenreList.Count} genres");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading genres: {ex.Message}");
+        }
+    }
+
+    private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
+    {
+        return await Task.FromResult(request.ApplyTo(GenreList.OrderBy(genre => genre.Name)));
+    }
+    
+    private void OnGenreSelected(GenreItem? genreSelected)
+    {
+        if (genreSelected != null)
+        {
+            SelectedGenre = genreSelected;
+            Console.WriteLine($"Selected genre: {genreSelected.Name} ({genreSelected.Id})");
+        }
+    }
+    
+    private async Task LoadEvents()
+    {
         try
         {
             var data = await TicketMasterClient.GetEventsByCity("dublin");
@@ -58,5 +115,4 @@ else
             IsLoading = false;
         }
     }
-    
 }
