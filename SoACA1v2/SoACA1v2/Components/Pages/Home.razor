@@ -29,6 +29,8 @@
               Placeholder="Select a country..."
               OnChanged="OnCountrySelected" />
 
+<button @onclick="OnSearchButtonClicked">Search</button>
+
 <h1>Ticketmaster Events</h1>
 
 @if (IsLoading)
@@ -73,9 +75,52 @@ else
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
         await LoadGenres();
         await LoadCountries();
-        await LoadEvents();
+        await LoadDefaultEvents();
     }
 
+    private async Task OnSearchButtonClicked()
+    {
+        await DisplayNewEvents();
+    }
+    
+    private async Task DisplayNewEvents()
+    { 
+        IsLoading = true;
+        try
+        {
+            var data = await TicketMasterClient.GetEventsByGenreAndCountry(SelectedCountry.Code,SelectedGenre.Id);
+            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
+            foreach (var v in Events)
+            {
+                Console.WriteLine("Event found "+v.id);
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Could not load events: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task LoadDefaultEvents()
+    {
+        try
+        {
+            var data = await TicketMasterClient.GetEventsByCity("dublin");
+            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Could not load events: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
     private async Task LoadGenres()
     {
         try
@@ -143,23 +188,6 @@ else
             SelectedCountry = countrySelected;
             SelectedCountryName = countrySelected.Name;
             Console.WriteLine($"Selected genre: {SelectedCountry.Name} ({SelectedCountry.Code})");
-        }
-    }
-    
-    private async Task LoadEvents()
-    {
-        try
-        {
-            var data = await TicketMasterClient.GetEventsByCity("dublin");
-            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Could not load events: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
         }
     }
 }
