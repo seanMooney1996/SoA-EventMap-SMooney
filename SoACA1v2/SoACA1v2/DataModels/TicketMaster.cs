@@ -120,7 +120,7 @@ namespace SoACA1v2.DataModels
         public string name { get; set; }
     }
 
-    public class Country
+    public partial class Country
     {
         [JsonPropertyName("name")]
         public string name { get; set; }

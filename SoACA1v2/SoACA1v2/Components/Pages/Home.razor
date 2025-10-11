@@ -19,8 +19,15 @@
               TItem="GenreItem"
               DataProvider="GenresDataProvider"
               PropertyName="Name"
-              Placeholder="Search a genre..."
+              Placeholder="Select a genre..."
               OnChanged="OnGenreSelected" />
+
+<AutoComplete @bind-Value="SelectedCountryName"
+              TItem="CountryItem"
+              DataProvider="CountryDataProvider"
+              PropertyName="Name"
+              Placeholder="Select a country..."
+              OnChanged="OnCountrySelected" />
 
 <h1>Ticketmaster Events</h1>
 
@@ -53,8 +60,11 @@ else
     private string ApiKey = string.Empty;
     private List<Events>? Events;
     private List<GenreItem> GenreList = new();
+    private List<CountryItem> CountryList = new();
     private GenreItem? SelectedGenre;
+    private CountryItem? SelectedCountry;
     private string? SelectedGenreName;
+    private string? SelectedCountryName;
     private bool IsLoading = true;
     private string? ErrorMessage;
     
@@ -62,6 +72,7 @@ else
     {
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
         await LoadGenres();
+        await LoadCountries();
         await LoadEvents();
     }
 
@@ -84,7 +95,7 @@ else
             Console.WriteLine($"Error loading genres: {ex.Message}");
         }
     }
-
+    
     private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
     {
         return await Task.FromResult(request.ApplyTo(GenreList.OrderBy(genre => genre.Name)));
@@ -95,7 +106,43 @@ else
         if (genreSelected != null)
         {
             SelectedGenre = genreSelected;
+            SelectedGenreName = genreSelected.Name;
             Console.WriteLine($"Selected genre: {genreSelected.Name} ({genreSelected.Id})");
+        }
+    }
+    
+    private async Task LoadCountries()
+    {
+        try
+        {
+            var filePath = Path.Combine(Env.WebRootPath, "countries.json");
+            var json = await File.ReadAllTextAsync(filePath);
+            var countryMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            
+            if (countryMap is not null)
+            {
+                CountryList = countryMap.Select(g => new CountryItem { Name = g.Key, Code = g.Value }).ToList();
+                Console.WriteLine($"✅ Loaded {CountryList.Count} genres");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading genres: {ex.Message}");
+        }
+    }
+    
+    private async Task<AutoCompleteDataProviderResult<CountryItem>> CountryDataProvider(AutoCompleteDataProviderRequest<CountryItem> request)
+    {
+        return await Task.FromResult(request.ApplyTo(CountryList.OrderBy(country => country.Name)));
+    }
+    
+    private void OnCountrySelected(CountryItem? countrySelected)
+    {
+        if (countrySelected != null)
+        {
+            SelectedCountry = countrySelected;
+            SelectedCountryName = countrySelected.Name;
+            Console.WriteLine($"Selected genre: {SelectedCountry.Name} ({SelectedCountry.Code})");
         }
     }
     
