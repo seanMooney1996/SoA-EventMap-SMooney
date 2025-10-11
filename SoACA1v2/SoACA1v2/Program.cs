@@ -1,6 +1,7 @@
 using GoogleMapsComponents;
 using SoACA1v2.Components;
 using Microsoft.Extensions.Configuration;
+using SoACA1v2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddBlazorBootstrap();
+
+builder.Services.AddHttpClient<TicketMasterClient>(client =>
+{
+    client.BaseAddress = new Uri("https://app.ticketmaster.com/discovery/v2/");
+});
 
 
 var app = builder.Build();
