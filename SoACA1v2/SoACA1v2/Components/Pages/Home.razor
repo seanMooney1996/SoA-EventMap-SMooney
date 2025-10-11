@@ -1,4 +1,7 @@
 ﻿@page "/"
+@inject TicketMasterClient TicketMasterClient
+@using SoACA1v2.DataModels
+@using SoACA1v2.Services
 @rendermode InteractiveServer
 @inject IConfiguration Configuration
 <GoogleMap ApiKey="@ApiKey"
@@ -7,17 +10,53 @@
            Width="100"
            Zoom="8" />
 <PageTitle>Home</PageTitle>
+<h1>Ticketmaster Events</h1>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@if (IsLoading)
+{
+    <p>Loading events...</p>
+}
+else if (ErrorMessage is not null)
+{
+    <p style="color:red">@ErrorMessage</p>
+}
+else if (Events?.Any() == true)
+{
+    <ul>
+        @foreach (var e in Events)
+        {
+            <li>@e.name - @e.dates?.start?.localDate</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No events found.</p>
+}
 
 
 @code {
     private string ApiKey = string.Empty;
-
-    protected override void OnInitialized()
+    private List<Events>? Events;
+    private bool IsLoading = true;
+    private string? ErrorMessage;
+    
+    protected override async Task OnInitializedAsync()
     {
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
+        try
+        {
+            var data = await TicketMasterClient.GetEventsByCity("dublin");
+            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Could not load events: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
+    
 }
