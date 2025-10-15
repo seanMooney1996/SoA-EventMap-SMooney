@@ -6,3 +6,5 @@ https://github.com/ichim/LeafletForBlazor-NuGet <- LeafletForBlazor-NuGet docs
 https://docs.blazorbootstrap.com/getting-started/blazor-webapp-server-global-net-8 <- blazor bootstrap
 https://learn.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-8.0 <- .net calling web API
 https://gist.github.com/keeguon/2310008 <- countries json 
+https://stackoverflow.com/questions/71713761/how-can-i-declare-a-global-variables-model-in-blazor , https://chrissainty.com/understanding-cascading-values-and-cascading-parameters <- cascading params
+https://blog.elmah.io/how-to-add-user-agent-header-to-httpclient-in-net/?utm_source=chatgpt.com <- user client
