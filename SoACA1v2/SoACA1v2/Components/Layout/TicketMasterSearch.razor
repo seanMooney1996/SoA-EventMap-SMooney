@@ -1,0 +1,163 @@
+﻿@using SoACA1v2.DataModels
+@rendermode InteractiveServer
+@inject IConfiguration Configuration
+@inject IWebHostEnvironment Env
+@inject TicketMasterClient TicketMasterClient
+@using System.Text.Json
+@using SoACA1v2.Services
+
+<h3>TicketMasterSearch</h3>
+<AutoComplete @bind-Value="SelectedGenreName"
+              TItem="GenreItem"
+              DataProvider="GenresDataProvider"
+              PropertyName="Name"
+              Placeholder="Select a genre..."
+              OnChanged="OnGenreSelected" />
+
+<AutoComplete @bind-Value="SelectedCountryName"
+              TItem="CountryItem"
+              DataProvider="CountryDataProvider"
+              PropertyName="Name"
+              Placeholder="Select a country..."
+              OnChanged="OnCountrySelected" />
+<button @onclick="OnSearchButtonClicked">Search for events</button>
+<h1>Ticketmaster Events</h1>
+
+@if (IsLoading)
+{
+    <p>Loading events...</p>
+}
+else if (ErrorMessage is not null)
+{
+    <p style="color:red">@ErrorMessage</p>
+}
+else if (Events?.Any() == true)
+{
+    <ul>
+        @foreach (var e in Events)
+        {
+            <li>@e.name - @e.dates?.start?.localDate</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No Locations found.</p>
+}
+
+@code {
+    private AutoComplete<GenreItem> autoComplete1 = default!;
+    private string genre = "";
+    private List<Events>? Events;
+    private List<GenreItem> GenreList = new();
+    private List<CountryItem> CountryList = new();
+    private GenreItem? SelectedGenre;
+    private CountryItem? SelectedCountry;
+    private string? SelectedGenreName;
+    private string? SelectedCountryName;
+    private bool IsLoading = true;
+    private string? ErrorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGenres();
+        await LoadCountries();
+    }
+    
+     private async Task OnSearchButtonClicked()
+    {
+        await DisplayNewEvents();
+    }
+    
+    private async Task DisplayNewEvents()
+    { 
+        IsLoading = true;
+        try
+        {
+            var data = await TicketMasterClient.GetEventsByGenreAndCountry(SelectedCountry.Code,SelectedGenre.Id);
+            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
+            foreach (var v in Events)
+            {
+                Console.WriteLine("Event found "+v.id);
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Could not load events: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    
+    private async Task LoadGenres()
+    {
+        try
+        {
+            var filePath = Path.Combine(Env.WebRootPath, "genre_name_to_id.json");
+            var json = await File.ReadAllTextAsync(filePath);
+            var genreMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+            if (genreMap is not null)
+            {
+                GenreList = genreMap.Select(g => new GenreItem { Name = g.Key, Id = g.Value }).ToList();
+                Console.WriteLine($"✅ Loaded {GenreList.Count} genres");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading genres: {ex.Message}");
+        }
+    }
+    
+    private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
+    {
+        return await Task.FromResult(request.ApplyTo(GenreList.OrderBy(genre => genre.Name)));
+    }
+    
+    private void OnGenreSelected(GenreItem? genreSelected)
+    {
+        if (genreSelected != null)
+        {
+            SelectedGenre = genreSelected;
+            SelectedGenreName = genreSelected.Name;
+            Console.WriteLine($"Selected genre: {genreSelected.Name} ({genreSelected.Id})");
+        }
+    }
+    
+    private async Task LoadCountries()
+    {
+        try
+        {
+            var filePath = Path.Combine(Env.WebRootPath, "countries.json");
+            var json = await File.ReadAllTextAsync(filePath);
+            var countryMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            
+            if (countryMap is not null)
+            {
+                CountryList = countryMap.Select(g => new CountryItem { Name = g.Key, Code = g.Value }).ToList();
+                Console.WriteLine($"✅ Loaded {CountryList.Count} genres");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading genres: {ex.Message}");
+        }
+    }
+    
+    private async Task<AutoCompleteDataProviderResult<CountryItem>> CountryDataProvider(AutoCompleteDataProviderRequest<CountryItem> request)
+    {
+        return await Task.FromResult(request.ApplyTo(CountryList.OrderBy(country => country.Name)));
+    }
+    
+    private void OnCountrySelected(CountryItem? countrySelected)
+    {
+        if (countrySelected != null)
+        {
+            SelectedCountry = countrySelected;
+            SelectedCountryName = countrySelected.Name;
+            Console.WriteLine($"Selected genre: {SelectedCountry.Name} ({SelectedCountry.Code})");
+        }
+    }
+}
