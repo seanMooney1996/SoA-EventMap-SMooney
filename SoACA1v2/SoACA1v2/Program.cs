@@ -15,6 +15,11 @@ builder.Services.AddHttpClient<TicketMasterClient>(client =>
     client.BaseAddress = new Uri("https://app.ticketmaster.com/discovery/v2/");
 });
 
+builder.Services.AddHttpClient<GooglePlacesClient>(client =>
+{
+    client.BaseAddress = new Uri("https://places.googleapis.com/v1/places/");
+});
+
 
 var app = builder.Build();
 
