@@ -18,7 +18,7 @@ public class GooglePlacesClient : HttpClientBase
                 query += queryList[i] + "+"; 
             }
         }
-        var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json??query={query}&key=AIzaSyD106Ay0bch9-eZ5sXYm1kEFjCelf3N-Gg";
+        var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json??query={query}&key={_apiKey}";
         return await GetAsync<RootObject>(url);
     }
     
