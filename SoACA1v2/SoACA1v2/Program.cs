@@ -2,6 +2,7 @@ using GoogleMapsComponents;
 using SoACA1v2.Components;
 using Microsoft.Extensions.Configuration;
 using SoACA1v2.Services;
+using SoACA1v2.Services.StateManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddHttpClient<GooglePlacesClient>(client =>
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");
 });
 
+builder.Services.AddSingleton<TicketMasterStateService>();
 
 var app = builder.Build();
 
