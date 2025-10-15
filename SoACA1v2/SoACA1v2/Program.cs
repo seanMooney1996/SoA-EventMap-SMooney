@@ -13,6 +13,13 @@ builder.Services.AddBlazorBootstrap();
 builder.Services.AddHttpClient<TicketMasterClient>(client =>
 {
     client.BaseAddress = new Uri("https://app.ticketmaster.com/discovery/v2/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");
+});
+
+builder.Services.AddHttpClient<GooglePlacesClient>(client =>
+{
+    client.BaseAddress = new Uri("https://places.googleapis.com/v1/places/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");
 });
 
 
