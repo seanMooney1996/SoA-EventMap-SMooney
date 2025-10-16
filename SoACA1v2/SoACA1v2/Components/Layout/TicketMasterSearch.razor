@@ -1,163 +1,142 @@
-﻿@using SoACA1v2.DataModels
-@rendermode InteractiveServer
-@inject IConfiguration Configuration
+﻿@page "/ticketmaster-search"
+@implements IDisposable
+@using SoACA1v2.DataModels
+@using SoACA1v2.Services.StateManagement
 @inject IWebHostEnvironment Env
-@inject TicketMasterClient TicketMasterClient
+@inject TicketMasterSearchStateService TicketMasterSearchStateService
 @using System.Text.Json
-@using SoACA1v2.Services
+@rendermode InteractiveServer
 
-<h3>TicketMasterSearch</h3>
-<AutoComplete @bind-Value="SelectedGenreName"
+<h3>TicketMaster Search</h3>
+<TextInput @bind-Value="@Keywords" Placeholder="Enter Keywords" />
+<AutoComplete @bind-Value="GenreName"
               TItem="GenreItem"
               DataProvider="GenresDataProvider"
               PropertyName="Name"
               Placeholder="Select a genre..."
               OnChanged="OnGenreSelected" />
+<button class="btn btn-secondary" @onclick="ClearGenre">Clear</button>
 
-<AutoComplete @bind-Value="SelectedCountryName"
+<AutoComplete @bind-Value="CountryName"
               TItem="CountryItem"
               DataProvider="CountryDataProvider"
               PropertyName="Name"
               Placeholder="Select a country..."
               OnChanged="OnCountrySelected" />
-<button @onclick="OnSearchButtonClicked">Search for events</button>
-<h1>Ticketmaster Events</h1>
 
-@if (IsLoading)
-{
-    <p>Loading events...</p>
-}
-else if (ErrorMessage is not null)
-{
-    <p style="color:red">@ErrorMessage</p>
-}
-else if (Events?.Any() == true)
-{
-    <ul>
-        @foreach (var e in Events)
-        {
-            <li>@e.name - @e.dates?.start?.localDate</li>
-        }
-    </ul>
-}
-else
-{
-    <p>No Locations found.</p>
-}
+<button class="btn btn-secondary" @onclick="ClearCountry">Clear</button>
+
+<DateInput TValue="DateOnly"
+           @bind-Value="StartDate"
+           Placeholder="Enter Start Date" />
+
+<DateInput TValue="DateOnly"
+           @bind-Value="EndDate"
+           Placeholder="Enter End Date" />
 
 @code {
-    private AutoComplete<GenreItem> autoComplete1 = default!;
-    private string genre = "";
-    private List<Events>? Events;
     private List<GenreItem> GenreList = new();
     private List<CountryItem> CountryList = new();
-    private GenreItem? SelectedGenre;
-    private CountryItem? SelectedCountry;
-    private string? SelectedGenreName;
-    private string? SelectedCountryName;
-    private bool IsLoading = true;
-    private string? ErrorMessage;
     
+    private string? GenreName;
+    private string? CountryName;
+
+    private string Keywords
+    {
+        get => TicketMasterSearchStateService.Keywords;
+        set => TicketMasterSearchStateService.Keywords = value;
+    }
+    private DateOnly StartDate
+    {
+        get => TicketMasterSearchStateService.StartDate;
+        set => TicketMasterSearchStateService.StartDate = value;
+    }
+
+    private DateOnly EndDate
+    {
+        get => TicketMasterSearchStateService.EndDate;
+        set => TicketMasterSearchStateService.EndDate = value;
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        TicketMasterSearchStateService.OnChange += StateHasChanged;
+
         await LoadGenres();
         await LoadCountries();
+
+        GenreName = TicketMasterSearchStateService.SelectedGenre?.Name;
+        CountryName = TicketMasterSearchStateService.SelectedCountry?.Name;
     }
     
-     private async Task OnSearchButtonClicked()
+    private void ClearGenre()
     {
-        await DisplayNewEvents();
+        OnGenreSelected(new GenreItem()); 
     }
-    
-    private async Task DisplayNewEvents()
-    { 
-        IsLoading = true;
-        try
-        {
-            var data = await TicketMasterClient.GetEventsByGenreAndCountry(SelectedCountry.Code,SelectedGenre.Id);
-            Events = data?._embedded?.events?.ToList() ?? new List<Events>();
-            foreach (var v in Events)
-            {
-                Console.WriteLine("Event found "+v.id);
-            }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Could not load events: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+
+    private void ClearCountry()
+    {
+        OnCountrySelected(new CountryItem());
     }
-    
+
     private async Task LoadGenres()
     {
         try
         {
             var filePath = Path.Combine(Env.WebRootPath, "genre_name_to_id.json");
             var json = await File.ReadAllTextAsync(filePath);
-            var genreMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            var map = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
-            if (genreMap is not null)
-            {
-                GenreList = genreMap.Select(g => new GenreItem { Name = g.Key, Id = g.Value }).ToList();
-                Console.WriteLine($"✅ Loaded {GenreList.Count} genres");
-            }
+            if (map is not null)
+                GenreList = map.Select(g => new GenreItem { Name = g.Key, Id = g.Value }).ToList();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading genres: {ex.Message}");
         }
     }
-    
-    private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
-    {
-        return await Task.FromResult(request.ApplyTo(GenreList.OrderBy(genre => genre.Name)));
-    }
-    
-    private void OnGenreSelected(GenreItem? genreSelected)
-    {
-        if (genreSelected != null)
-        {
-            SelectedGenre = genreSelected;
-            SelectedGenreName = genreSelected.Name;
-            Console.WriteLine($"Selected genre: {genreSelected.Name} ({genreSelected.Id})");
-        }
-    }
-    
+
     private async Task LoadCountries()
     {
         try
         {
             var filePath = Path.Combine(Env.WebRootPath, "countries.json");
             var json = await File.ReadAllTextAsync(filePath);
-            var countryMap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            
-            if (countryMap is not null)
-            {
-                CountryList = countryMap.Select(g => new CountryItem { Name = g.Key, Code = g.Value }).ToList();
-                Console.WriteLine($"✅ Loaded {CountryList.Count} genres");
-            }
+            var map = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+            if (map is not null)
+                CountryList = map.Select(c => new CountryItem { Name = c.Key, Code = c.Value }).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading genres: {ex.Message}");
+            Console.WriteLine($"Error loading countries: {ex.Message}");
         }
     }
-    
+
+    private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
+        => await Task.FromResult(request.ApplyTo(GenreList.OrderBy(g => g.Name)));
+
     private async Task<AutoCompleteDataProviderResult<CountryItem>> CountryDataProvider(AutoCompleteDataProviderRequest<CountryItem> request)
+        => await Task.FromResult(request.ApplyTo(CountryList.OrderBy(c => c.Name)));
+
+    private void OnGenreSelected(GenreItem? genre)
     {
-        return await Task.FromResult(request.ApplyTo(CountryList.OrderBy(country => country.Name)));
+        if (genre is null) return;
+
+        GenreName = genre.Name;
+        TicketMasterSearchStateService.SelectedGenre = genre;
     }
-    
-    private void OnCountrySelected(CountryItem? countrySelected)
+
+    private void OnCountrySelected(CountryItem? country)
     {
-        if (countrySelected != null)
-        {
-            SelectedCountry = countrySelected;
-            SelectedCountryName = countrySelected.Name;
-            Console.WriteLine($"Selected genre: {SelectedCountry.Name} ({SelectedCountry.Code})");
-        }
+        if (country is null) return;
+
+        CountryName = country.Name;
+        TicketMasterSearchStateService.SelectedCountry = country;
+    }
+
+    public void Dispose()
+    {
+        TicketMasterSearchStateService.OnChange -= StateHasChanged;
     }
 }

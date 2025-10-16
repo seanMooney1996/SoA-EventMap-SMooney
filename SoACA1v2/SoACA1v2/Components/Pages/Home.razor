@@ -1,9 +1,8 @@
 ﻿@page "/"
-@inject TicketMasterClient TicketMasterClient
 @using SoACA1v2.Components.Layout
-@using SoACA1v2.Services
 @rendermode InteractiveServer
 @inject IConfiguration Configuration
+@inject TicketMasterController Controller
 
 <GoogleMap ApiKey="@ApiKey"
            Center="new GoogleMapCenter(-34.397, 150.644)"
@@ -13,6 +12,7 @@
 
 <PageTitle>Home</PageTitle>
 <TicketMasterSearch></TicketMasterSearch>
+<EventsLayout></EventsLayout>
 @code {
     private string ApiKey = string.Empty;
     protected override async Task OnInitializedAsync()
