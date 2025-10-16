@@ -1,22 +1,100 @@
 ﻿@page "/"
 @using SoACA1v2.Components.Layout
 @rendermode InteractiveServer
-@inject IConfiguration Configuration
 @inject TicketMasterController Controller
 
-<GoogleMap ApiKey="@ApiKey"
-           Center="new GoogleMapCenter(-34.397, 150.644)"
-           Height="400"
-           Width="100"
-           Zoom="8" />
-
 <PageTitle>Home</PageTitle>
-<TicketMasterSearch></TicketMasterSearch>
-<EventsLayout></EventsLayout>
-@code {
-    private string ApiKey = string.Empty;
-    protected override async Task OnInitializedAsync()
-    {
-        ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
+
+<div class="main-dashboard">
+    <div class="left-column">
+        <div class="search-area">
+            <TicketMasterSearch />
+        </div>
+        <div class="map-area">
+            <GoogleMapLayout />
+        </div>
+    </div>
+
+    <div class="right-column">
+        <EventsLayout />
+    </div>
+</div>
+
+<style>
+    html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        scrollbar-gutter: stable both-edges;
     }
-}
+
+    .main-dashboard {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        width: 97vw;
+        box-sizing: border-box;
+        margin-right: calc(-1 * (100vw - 100%));
+        overflow-x: hidden;
+        overflow-y: visible;
+
+        gap: 0.5rem;
+        padding: 0.5rem;
+        align-items: stretch;
+        justify-content: space-between;
+    }
+
+    .left-column {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 69%;
+        height: 95%;
+        overflow: hidden;
+        padding:0.5rem;
+    }
+
+    .search-area {
+        flex: 20%;
+        max-height: 20%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .map-area {
+        flex: 1 1 80%;
+        max-height: 80%;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .map-area google-map,
+    .map-area {
+        height: 100%;
+        width: 100%;
+    }
+
+    .right-column {
+        display: flex;
+        height: 95%;
+        width: 30%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        padding:0.5rem;
+    }
+
+    .right-column::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .right-column::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+
+    .search-area > * {
+        height: 100%;
+    }
+</style>

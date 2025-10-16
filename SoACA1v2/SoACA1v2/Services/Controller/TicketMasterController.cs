@@ -32,7 +32,7 @@ public class TicketMasterController : IDisposable
 
         try
         {
-            await Task.Delay(500, token);
+            await Task.Delay(200,token);
             if (!token.IsCancellationRequested)
                 await FetchEventsAsync();
         }

@@ -4,29 +4,40 @@
 @rendermode InteractiveServer
 @inject TicketMasterEventStateService TicketMasterEventStateService
 
-<h1>Ticketmaster Events</h1>
 
-@if (IsLoading)
-{
-    <p>Loading events...</p>
-}
-else if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <p style="color:red">@ErrorMessage</p>
-}
-else if (Events?.Any() == true)
-{
-    <ul>
-        @foreach (var e in Events)
+
+<div class="event-grid p-3">
+    @if (IsLoading)
+    {
+        <p>Loading events...</p>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p class="text-danger">@ErrorMessage</p>
+    }
+    else if (Events?.Any() == true)
+    {
+        <CardGroup>
+        @foreach (var e in TicketMasterEventStateService.Events)
         {
-            <li>@e.name - @e.dates?.start?.localDate</li>
+            <Card class="shadow-sm event-card">
+                <img src="@e.images?.FirstOrDefault()?.url"
+                     alt="@e.name"
+                     class="card-img-top event-img" />
+                <CardBody>
+                    <CardTitle>@e.name</CardTitle>
+                    <CardText>@e.dates?.start?.localDate</CardText>
+                    <Button Color="ButtonColor.Primary" To="@e.url">View</Button>
+                </CardBody>
+            </Card>
         }
-    </ul>
-}
-else
-{
-    <p>No Locations found.</p>
-}
+        </CardGroup>
+    }
+    else
+    {
+        <p>No events found.</p>
+    }
+</div>
 
 @code {
     private List<Events>? Events;
@@ -56,3 +67,35 @@ else
         Console.WriteLine($"✅ Synced state: {Events.Count} events , is Loading {IsLoading}");
     }
 }
+
+<style>
+    .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.2rem;
+        overflow-y: auto;
+        max-height: 100%;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+        padding-top:0 !important;
+    }
+    .event-card {
+        min-width: 50%;
+    }
+    .event-img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0.375rem;
+    }
+
+    .event-grid::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .event-grid::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+</style>
