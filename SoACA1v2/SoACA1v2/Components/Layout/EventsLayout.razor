@@ -1,0 +1,58 @@
+@using SoACA1v2.DataModels
+@using SoACA1v2.Services
+@using SoACA1v2.Services.StateManagement
+@rendermode InteractiveServer
+@inject TicketMasterEventStateService TicketMasterEventStateService
+
+<h1>Ticketmaster Events</h1>
+
+@if (IsLoading)
+{
+    <p>Loading events...</p>
+}
+else if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p style="color:red">@ErrorMessage</p>
+}
+else if (Events?.Any() == true)
+{
+    <ul>
+        @foreach (var e in Events)
+        {
+            <li>@e.name - @e.dates?.start?.localDate</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No Locations found.</p>
+}
+
+@code {
+    private List<Events>? Events;
+    private bool IsLoading;
+    private string? ErrorMessage;
+
+    protected override void OnInitialized()
+    {
+        TicketMasterEventStateService.OnChange += OnEventStateChanged;
+        SyncState();
+    }
+
+    private async void OnEventStateChanged()
+    {
+        await InvokeAsync(() =>
+        {
+            SyncState();
+            StateHasChanged();
+        });
+    }
+
+    private void SyncState()
+    {
+        Events = TicketMasterEventStateService.Events ?? new List<Events>();
+        IsLoading = TicketMasterEventStateService.IsLoading;
+        ErrorMessage = TicketMasterEventStateService.ErrorMessage;
+        Console.WriteLine($"✅ Synced state: {Events.Count} events , is Loading {IsLoading}");
+    }
+}
