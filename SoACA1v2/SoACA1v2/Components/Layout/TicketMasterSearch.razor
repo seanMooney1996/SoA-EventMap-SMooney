@@ -6,34 +6,64 @@
 @inject TicketMasterSearchStateService TicketMasterSearchStateService
 @using System.Text.Json
 @rendermode InteractiveServer
+<div class="card shadow-sm p-3 search-card">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Keywords</label>
+                <TextInput @bind-Value="@Keywords"
+                           Placeholder="Enter keywords..."
+                           Class="form-control" />
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Genre</label>
+                <div class="input-group">
+                    <AutoComplete @bind-Value="GenreName"
+                                  TItem="GenreItem"
+                                  DataProvider="GenresDataProvider"
+                                  PropertyName="Name"
+                                  Placeholder="Select a genre..."
+                                  OnChanged="OnGenreSelected" />
+                    <button class="btn btn-outline-secondary" type="button" @onclick="ClearGenre">
+                        Clear
+                    </button>
+                </div>
+            </div>
 
-<h3>TicketMaster Search</h3>
-<TextInput @bind-Value="@Keywords" Placeholder="Enter Keywords" />
-<AutoComplete @bind-Value="GenreName"
-              TItem="GenreItem"
-              DataProvider="GenresDataProvider"
-              PropertyName="Name"
-              Placeholder="Select a genre..."
-              OnChanged="OnGenreSelected" />
-<button class="btn btn-secondary" @onclick="ClearGenre">Clear</button>
+            <!-- Country -->
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Country</label>
+                <div class="input-group">
+                    <AutoComplete @bind-Value="CountryName"
+                                  TItem="CountryItem"
+                                  DataProvider="CountryDataProvider"
+                                  PropertyName="Name"
+                                  Placeholder="Select a country..."
+                                  OnChanged="OnCountrySelected" />
+                    <button class="btn btn-outline-secondary" type="button" @onclick="ClearCountry">
+                        Clear
+                    </button>
+                </div>
+            </div>
 
-<AutoComplete @bind-Value="CountryName"
-              TItem="CountryItem"
-              DataProvider="CountryDataProvider"
-              PropertyName="Name"
-              Placeholder="Select a country..."
-              OnChanged="OnCountrySelected" />
+            <!-- Dates -->
+            <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold">Start Date</label>
+                <DateInput TValue="DateOnly"
+                           @bind-Value="StartDate"
+                           Placeholder="Start date"
+                           Class="form-control" />
+            </div>
 
-<button class="btn btn-secondary" @onclick="ClearCountry">Clear</button>
-
-<DateInput TValue="DateOnly"
-           @bind-Value="StartDate"
-           Placeholder="Enter Start Date" />
-
-<DateInput TValue="DateOnly"
-           @bind-Value="EndDate"
-           Placeholder="Enter End Date" />
-
+            <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold">End Date</label>
+                <DateInput TValue="DateOnly"
+                           @bind-Value="EndDate"
+                           Placeholder="End date"
+                           Class="form-control" />
+            </div>
+        </div>
+    </div>
 @code {
     private List<GenreItem> GenreList = new();
     private List<CountryItem> CountryList = new();
@@ -140,3 +170,27 @@
         TicketMasterSearchStateService.OnChange -= StateHasChanged;
     }
 }
+<style>
+    .search-card {
+        background-color: #fff;
+        border-radius: 12px;
+        height: 100%;
+        padding: 1rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        color: #333;
+    }
+
+    .input-group .btn {
+        min-width: 70px;
+    }
+
+    .card-title {
+        font-weight: 600;
+    }
+    .card-body{
+        
+    }
+</style>

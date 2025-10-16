@@ -1,0 +1,32 @@
+@inject IConfiguration Configuration
+
+<div class="google-map-container">
+    <GoogleMap ApiKey="@ApiKey"
+               Center="new GoogleMapCenter(-34.397, 150.644)"
+               Height="400"
+               Width="800"
+               Zoom="8" 
+               class="map-responsive"/>
+</div>
+
+@code {
+    private string ApiKey = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
+    }
+}
+
+<style>
+    .google-map-container {
+        width: 100%;
+        max-height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .map-responsive {
+        width: 100% !important;
+        height: calc(100vh - 195px) !important;
+    }
+</style>
