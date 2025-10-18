@@ -1,32 +1,107 @@
+@using SoACA1v2.Services.StateManagement
 @inject IConfiguration Configuration
+@inject MapStateService MapStateService
 
-<div class="google-map-container">
-    <GoogleMap ApiKey="@ApiKey"
-               Center="new GoogleMapCenter(-34.397, 150.644)"
-               Height="400"
-               Width="800"
-               Zoom="8" 
-               class="map-responsive"/>
-</div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loader"></div>
+    }
+    else
+    {
+        <div class="google-map-container">
+            <GoogleMap @key="@($"{MapCenter.Latitude}-{MapCenter.Longitude}-{ZoomInt}")"
+                       ApiKey="@ApiKey"
+                       Center="MapCenter"
+                       Height="400"
+                       Width="800"
+                       Zoom=ZoomInt
+                       class="map-responsive"
+                       Markers="Markers"
+                       OnMapInitialized="OnMapInit"/>
+        </div>
+    }
 
 @code {
     private string ApiKey = string.Empty;
+    private bool IsLoading;
+    List<GoogleMapMarker> Markers;
+    private int ZoomInt;
+    private GoogleMapCenter MapCenter;
+    
+    protected override void OnInitialized()
+    {
+        MapStateService.OnChange += OnEventStateChanged;
+        SyncState();
+    }
     protected override async Task OnInitializedAsync()
     {
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
     }
+    
+    private async void OnEventStateChanged()
+    {
+        await InvokeAsync(() =>
+        {
+            SyncState();
+            StateHasChanged();
+        });
+    }
+    
+    private void SyncState()
+    {
+        Markers = MapStateService.Markers ?? new List<GoogleMapMarker>();
+        IsLoading = MapStateService.IsLoading;
+        ZoomInt = int.Parse(MapStateService.Zoom);
+        MapCenter = MapStateService.GoogleMapCenter ?? new GoogleMapCenter(11,11);
+        Console.WriteLine($"✅ Synced map state:");
+    }   
 }
-
+@* https://css-loaders.com/classic  <- loading animation taken from here *@
 <style>
     .google-map-container {
         width: 100%;
         max-height: 100%;
         border-radius: 8px;
         overflow: hidden;
+        border: 1px solid #4285f4;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        background-color: #60d0e5;
     }
     .map-responsive {
         width: 100% !important;
-        height: calc(100vh - 195px) !important;
+        height: calc(100vh - 260px) !important;
+    }
+    .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 48px;
+        color: #4285f4; 
+        text-align: center;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #4285f4;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        height: 100%;
+        width: 100%;
+        animation: l1 1s linear infinite alternate;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.7); 
+    }
+    .loader:before {
+        content:"Loading Map Markers..."
+    }
+    @@keyframes l1 {to{opacity: 0}}
+
+    .gm-style{
+        z-index:1!important;
     }
 </style>

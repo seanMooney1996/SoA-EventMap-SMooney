@@ -12,7 +12,8 @@ namespace SoACA1v2.Services
         {
             var queryParams = new List<string>
             {
-                $"apikey={_apiKey}&classificationName=Music"
+                $"apikey={_apiKey}&classificationName=Music",
+                $"size=10"
             };
 
             if (!string.IsNullOrWhiteSpace(countryCode))

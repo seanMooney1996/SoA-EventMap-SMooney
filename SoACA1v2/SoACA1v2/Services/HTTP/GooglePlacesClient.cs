@@ -1,4 +1,7 @@
-﻿namespace SoACA1v2.Services;
+﻿using System.Text;
+using System.Text.Json;
+
+namespace SoACA1v2.Services;
 
 using SoACA1v2.DataModels;
 using System.Net.Http.Json;
@@ -8,18 +11,43 @@ public class GooglePlacesClient : HttpClientBase
     public GooglePlacesClient(HttpClient http, IConfiguration config)
         : base(http, config, "GoogleAPI") { }
     
-    public async Task<RootObject?> TestSearch(List<string> queryList)
+    public async Task<GoogleLocations.Root?> GetVenueByName(string venueName, string? latitude = null, string? longitude = null)
     {
-        var query = queryList[0];
-        for (int i = 1; i < queryList.Count; i++)
+        if (string.IsNullOrWhiteSpace(venueName))
+            return null;
+        var endpoint = "/v1/places:searchText";
+
+        object requestBody;
+        if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
         {
-            if (i != queryList.Count - 1)
+            requestBody = new
             {
-                query += queryList[i] + "+"; 
-            }
+                textQuery = venueName,
+                locationBias = new
+                {
+                    circle = new
+                    {
+                        center = new
+                        {
+                            latitude = double.Parse(latitude),
+                            longitude = double.Parse(longitude)
+                        },
+                        radius = 5000.0
+                    }
+                }
+            };
         }
-        var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json??query={query}&key={_apiKey}";
-        return await GetAsync<RootObject>(url);
+        else
+        {
+            requestBody = new { textQuery = venueName };
+        }
+        
+        var json = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        content.Headers.Add("X-Goog-Api-Key", _apiKey);
+        content.Headers.Add("X-Goog-FieldMask", "places.displayName,places.formattedAddress,places.location,places.id,places.photos,places.rating,places.userRatingCount,places.types");
+        
+        return await GetAsyncWithContent<GoogleLocations.Root>(endpoint, content);
     }
     
 }
