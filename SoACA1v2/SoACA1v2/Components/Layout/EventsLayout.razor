@@ -2,14 +2,14 @@
 @using SoACA1v2.Services
 @using SoACA1v2.Services.StateManagement
 @rendermode InteractiveServer
-@inject TicketMasterEventStateService TicketMasterEventStateService
+@inject EventStateService EventStateService
 
 
 
 <div class="event-grid p-3">
     @if (IsLoading)
     {
-        <p>Loading events...</p>
+        <div class="loader_events"></div>
     }
     else if (!string.IsNullOrEmpty(ErrorMessage))
     {
@@ -18,16 +18,16 @@
     else if (Events?.Any() == true)
     {
         <CardGroup>
-        @foreach (var e in TicketMasterEventStateService.Events)
+            @foreach (var (e, index) in EventStateService.Events.Select((e, index) => (e, index)))
         {
             <Card class="shadow-sm event-card">
-                <img src="@e.images?.FirstOrDefault()?.url"
-                     alt="@e.name"
+                <img src="@e.Images?.FirstOrDefault()?.Url"
+                     alt="@e.Name"
                      class="card-img-top event-img" />
                 <CardBody>
-                    <CardTitle>@e.name</CardTitle>
-                    <CardText>@e.dates?.start?.localDate</CardText>
-                    <Button Color="ButtonColor.Primary" To="@e.url">View</Button>
+                    <CardTitle>@e.Name</CardTitle>
+                    <CardText>@e.Dates?.Start?.LocalDate</CardText>
+                    <Button Color="ButtonColor.Primary"  @onclick="((args) => FindEventClicked(args,index ))" >Map</Button>
                 </CardBody>
             </Card>
         }
@@ -46,8 +46,14 @@
 
     protected override void OnInitialized()
     {
-        TicketMasterEventStateService.OnChange += OnEventStateChanged;
+        EventStateService.OnChange += OnEventStateChanged;
         SyncState();
+    }
+
+    private void FindEventClicked(EventArgs args, int index)
+    {
+        Console.WriteLine($"Locating event at index --- {index} ");
+        EventStateService.EventToLocateIndex = index;
     }
 
     private async void OnEventStateChanged()
@@ -61,10 +67,10 @@
 
     private void SyncState()
     {
-        Events = TicketMasterEventStateService.Events ?? new List<Events>();
-        IsLoading = TicketMasterEventStateService.IsLoading;
-        ErrorMessage = TicketMasterEventStateService.ErrorMessage;
-        Console.WriteLine($"✅ Synced state: {Events.Count} events , is Loading {IsLoading}");
+        Events = EventStateService.Events ?? new List<Events>();
+        IsLoading = EventStateService.IsLoading;
+        ErrorMessage = EventStateService.ErrorMessage;
+        Console.WriteLine($"Synced state: {Events.Count} events , is Loading {IsLoading}");
     }
 }
 
@@ -98,4 +104,27 @@
         background-color: #ccc;
         border-radius: 4px;
     }
+    .loader_events {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 48px;
+        color: #4285f4;
+        text-align: center;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #4285f4;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        height: 100%;
+        width: 100%;
+        animation: l1 1s linear infinite alternate;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+    .loader_events:before {
+        content:"Loading Map Markers..."
+    }
+    @@keyframes l1 {to{opacity: 0}}
 </style>

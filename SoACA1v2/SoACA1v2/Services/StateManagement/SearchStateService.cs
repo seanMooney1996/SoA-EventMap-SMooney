@@ -2,7 +2,7 @@
 
 namespace SoACA1v2.Services.StateManagement
 {
-    public class TicketMasterSearchStateService
+    public class SearchStateService
     {
         private GenreItem selectedGenre = new();
         private CountryItem selectedCountry = new();

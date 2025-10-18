@@ -3,67 +3,65 @@
 @using SoACA1v2.DataModels
 @using SoACA1v2.Services.StateManagement
 @inject IWebHostEnvironment Env
-@inject TicketMasterSearchStateService TicketMasterSearchStateService
+@inject SearchStateService SearchStateService
 @using System.Text.Json
 @rendermode InteractiveServer
 <div class="card shadow-sm p-3 search-card">
-        <div class="row g-3 align-items-end">
-            <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Keywords</label>
-                <TextInput @bind-Value="@Keywords"
-                           Placeholder="Enter keywords..."
-                           Class="form-control" />
-            </div>
-            
-            <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Genre</label>
-                <div class="input-group">
-                    <AutoComplete @bind-Value="GenreName"
-                                  TItem="GenreItem"
-                                  DataProvider="GenresDataProvider"
-                                  PropertyName="Name"
-                                  Placeholder="Select a genre..."
-                                  OnChanged="OnGenreSelected" />
-                    <button class="btn btn-outline-secondary" type="button" @onclick="ClearGenre">
-                        Clear
-                    </button>
-                </div>
-            </div>
-
-            <!-- Country -->
-            <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Country</label>
-                <div class="input-group">
-                    <AutoComplete @bind-Value="CountryName"
-                                  TItem="CountryItem"
-                                  DataProvider="CountryDataProvider"
-                                  PropertyName="Name"
-                                  Placeholder="Select a country..."
-                                  OnChanged="OnCountrySelected" />
-                    <button class="btn btn-outline-secondary" type="button" @onclick="ClearCountry">
-                        Clear
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dates -->
-            <div class="col-6 col-md-3">
-                <label class="form-label fw-semibold">Start Date</label>
-                <DateInput TValue="DateOnly"
-                           @bind-Value="StartDate"
-                           Placeholder="Start date"
-                           Class="form-control" />
-            </div>
-
-            <div class="col-6 col-md-3">
-                <label class="form-label fw-semibold">End Date</label>
-                <DateInput TValue="DateOnly"
-                           @bind-Value="EndDate"
-                           Placeholder="End date"
-                           Class="form-control" />
+    <div class="row">
+        <div class="col col75">
+            <label class="form-label fw-semibold">Keywords</label>
+            <TextInput @bind-Value="@Keywords"
+                       Placeholder="Enter keywords..."
+                       Class="form-control" />
+        </div>
+        <div class="col col25">
+            <label class="form-label fw-semibold">Genre</label>
+            <div class="input-group">
+                <AutoComplete @bind-Value="GenreName"
+                              TItem="GenreItem"
+                              DataProvider="GenresDataProvider"
+                              PropertyName="Name"
+                              Placeholder="Select a genre..."
+                              OnChanged="OnGenreSelected" 
+                              Class="auto-comp" />
+                <button class="btn btn-outline-secondary btn-search" type="button" @onclick="ClearGenre">
+                    Clear
+                </button>
             </div>
         </div>
     </div>
+    
+    <div class="row">
+        <div class="col col50">
+            <label class="form-label fw-semibold">Country</label>
+            <div class="input-group">
+                <AutoComplete @bind-Value="CountryName"
+                              TItem="CountryItem"
+                              DataProvider="CountryDataProvider"
+                              PropertyName="Name"
+                              Placeholder="Select a country..."
+                              OnChanged="OnCountrySelected" />
+                <button class="btn btn-outline-secondary" type="button" @onclick="ClearCountry">
+                    Clear
+                </button>
+            </div>
+        </div>
+        <div class="col col25">
+            <label class="form-label fw-semibold">Start Date</label>
+            <DateInput TValue="DateOnly"
+                       @bind-Value="StartDate"
+                       Placeholder="Start date"
+                       Class="form-control-date" />
+        </div>
+        <div class="col col25">
+            <label class="form-label fw-semibold">End Date</label>
+            <DateInput TValue="DateOnly"
+                       @bind-Value="EndDate"
+                       Placeholder="End date"
+                       Class="form-control-date" />
+        </div>
+    </div>
+</div>
 @code {
     private List<GenreItem> GenreList = new();
     private List<CountryItem> CountryList = new();
@@ -73,30 +71,30 @@
 
     private string Keywords
     {
-        get => TicketMasterSearchStateService.Keywords;
-        set => TicketMasterSearchStateService.Keywords = value;
+        get => SearchStateService.Keywords;
+        set => SearchStateService.Keywords = value;
     }
     private DateOnly StartDate
     {
-        get => TicketMasterSearchStateService.StartDate;
-        set => TicketMasterSearchStateService.StartDate = value;
+        get => SearchStateService.StartDate;
+        set => SearchStateService.StartDate = value;
     }
 
     private DateOnly EndDate
     {
-        get => TicketMasterSearchStateService.EndDate;
-        set => TicketMasterSearchStateService.EndDate = value;
+        get => SearchStateService.EndDate;
+        set => SearchStateService.EndDate = value;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        TicketMasterSearchStateService.OnChange += StateHasChanged;
+        SearchStateService.OnChange += StateHasChanged;
 
         await LoadGenres();
         await LoadCountries();
 
-        GenreName = TicketMasterSearchStateService.SelectedGenre?.Name;
-        CountryName = TicketMasterSearchStateService.SelectedCountry?.Name;
+        GenreName = SearchStateService.SelectedGenre?.Name;
+        CountryName = SearchStateService.SelectedCountry?.Name;
     }
     
     private void ClearGenre()
@@ -154,7 +152,7 @@
         if (genre is null) return;
 
         GenreName = genre.Name;
-        TicketMasterSearchStateService.SelectedGenre = genre;
+        SearchStateService.SelectedGenre = genre;
     }
 
     private void OnCountrySelected(CountryItem? country)
@@ -162,35 +160,105 @@
         if (country is null) return;
 
         CountryName = country.Name;
-        TicketMasterSearchStateService.SelectedCountry = country;
+        SearchStateService.SelectedCountry = country;
     }
 
     public void Dispose()
     {
-        TicketMasterSearchStateService.OnChange -= StateHasChanged;
+        SearchStateService.OnChange -= StateHasChanged;
     }
 }
 <style>
+    .col25 {
+        width: 25%;
+        max-width: 25%;
+    }
+    .col25 input {
+        width: 95%!important;
+    }
+    .col50 {
+        width: 50%;
+    }
+    .col75 {
+        width: 75%;
+    }
+    .col75 .form-control {
+        width: 98%!important;
+    }
+    .col75 .form-control input {
+        max-width: 100%!important;
+    }
+    .col{
+        max-height:100%;
+        margin:0!important;
+        padding: 0!important;
+    }
+    .row {
+        display: flex;
+        align-content: center;
+        height: 45%;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-items: center;
+        justify-content: flex-start;
+    }
     .search-card {
         background-color: #fff;
         border-radius: 12px;
-        height: 100%;
-        padding: 1rem;
+        padding: 1.5rem;
     }
 
     .form-label {
-        font-size: 0.9rem;
-        color: #333;
+        flex: 0 0 30%; 
+        display: flex;
+        align-items: flex-end; 
+        font-size: 1em;
+        margin:0!important;
+    }
+
+    .input-group{
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: nowrap;
+    }
+    .input-group- .auto-comp {
+        width:100%;
+    }
+    .form-control{
+        font-size: 1rem;
+        max-height: 60%;
     }
 
     .input-group .btn {
         min-width: 70px;
-    }
-
-    .card-title {
-        font-weight: 600;
-    }
-    .card-body{
+        max-height: 60%;
+        width:18%;
         
     }
+    .input-group input {
+        width:78%!important;
+    }
+    
+    .form-control-date input {
+        width: 95% !important;
+    }
+    
+    .btn-search {
+        max-width: 20%!important;
+    }
+    .autocomplete {
+        width: 80%!important;
+    }
+    .dropdown-menu {
+        z-index: 9999 !important;
+    }
+    .bi{
+        display: none;
+    }
+    
 </style>

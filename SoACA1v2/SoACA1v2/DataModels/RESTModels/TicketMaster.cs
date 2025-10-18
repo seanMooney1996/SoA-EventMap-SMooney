@@ -2,187 +2,159 @@
 
 namespace SoACA1v2.DataModels
 {
-    
     public class RootObject
     {
         [JsonPropertyName("_embedded")]
-        public _embedded _embedded { get; set; }
+        public Embedded Embedded { get; set; }
     }
 
-    public class _embedded
+    public class Embedded
     {
         [JsonPropertyName("events")]
-        public Events[] events { get; set; }
+        public Events[] Events { get; set; }
     }
 
     public class Events
     {
         [JsonPropertyName("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [JsonPropertyName("type")]
-        public string type { get; set; }
+        public string Type { get; set; }
 
         [JsonPropertyName("id")]
-        public string id { get; set; }
+        public string Id { get; set; }
 
         [JsonPropertyName("test")]
-        public bool test { get; set; }
+        public bool Test { get; set; }
 
         [JsonPropertyName("url")]
-        public string url { get; set; }
+        public string Url { get; set; }
 
         [JsonPropertyName("locale")]
-        public string locale { get; set; }
+        public string Locale { get; set; }
 
         [JsonPropertyName("images")]
-        public Images[] images { get; set; }
+        public Images[] Images { get; set; }
 
         [JsonPropertyName("dates")]
-        public Dates dates { get; set; }
+        public Dates Dates { get; set; }
 
         [JsonPropertyName("classifications")]
-        public Classifications[] classifications { get; set; }
+        public Classifications[] Classifications { get; set; }
 
         [JsonPropertyName("info")]
-        public string info { get; set; }
+        public string Info { get; set; }
 
         [JsonPropertyName("pleaseNote")]
-        public string pleaseNote { get; set; }
+        public string PleaseNote { get; set; }
+
+        [JsonPropertyName("_embedded")]
+        public EventEmbedded Embedded { get; set; } 
+    }
+
+    public class EventEmbedded
+    {
+        [JsonPropertyName("venues")]
+        public Venue[] Venues { get; set; }
+    }
+
+    public class Venue
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("city")]
+        public City City { get; set; }
+
+        [JsonPropertyName("country")]
+        public Country Country { get; set; }
+
+        [JsonPropertyName("location")]
+        public Location Location { get; set; }
+
+        [JsonPropertyName("images")]
+        public Images[] Images { get; set; }
+
+        [JsonPropertyName("address")]
+        public Address Address { get; set; }
+    }
+
+    public class Address
+    {
+        [JsonPropertyName("line1")]
+        public string Line1 { get; set; }
     }
 
     public class Images
     {
         [JsonPropertyName("ratio")]
-        public string ratio { get; set; }
+        public string Ratio { get; set; }
 
         [JsonPropertyName("url")]
-        public string url { get; set; }
+        public string Url { get; set; }
 
         [JsonPropertyName("width")]
-        public int width { get; set; }
+        public int Width { get; set; }
 
         [JsonPropertyName("height")]
-        public int height { get; set; }
+        public int Height { get; set; }
 
         [JsonPropertyName("fallback")]
-        public bool fallback { get; set; }
-    }
-
-    public class Public
-    {
-        [JsonPropertyName("startDateTime")]
-        public string startDateTime { get; set; }
-
-        [JsonPropertyName("startTBD")]
-        public bool startTBD { get; set; }
-
-        [JsonPropertyName("startTBA")]
-        public bool startTBA { get; set; }
-
-        [JsonPropertyName("endDateTime")]
-        public string endDateTime { get; set; }
+        public bool Fallback { get; set; }
     }
 
     public class Dates
     {
         [JsonPropertyName("start")]
-        public Start start { get; set; }
+        public Start Start { get; set; }
     }
 
     public class Start
     {
         [JsonPropertyName("localDate")]
-        public string localDate { get; set; }
+        public string LocalDate { get; set; }
 
         [JsonPropertyName("localTime")]
-        public string localTime { get; set; }
+        public string LocalTime { get; set; }
     }
 
     public class Classifications
     {
         [JsonPropertyName("segment")]
-        public Segment segment { get; set; }
+        public Segment Segment { get; set; }
     }
 
     public class Segment
     {
         [JsonPropertyName("id")]
-        public string id { get; set; }
+        public string Id { get; set; }
 
         [JsonPropertyName("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
     }
 
     public class City
     {
         [JsonPropertyName("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
     }
 
-    public partial class Country
+    public class Country
     {
         [JsonPropertyName("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [JsonPropertyName("countryCode")]
-        public string countryCode { get; set; }
+        public string CountryCode { get; set; }
     }
 
     public class Location
     {
         [JsonPropertyName("longitude")]
-        public string longitude { get; set; }
+        public string Longitude { get; set; }
 
         [JsonPropertyName("latitude")]
-        public string latitude { get; set; }
-    }
-
-    public class ExternalLinks
-    {
-        [JsonPropertyName("twitter")]
-        public Twitter[] twitter { get; set; }
-
-        [JsonPropertyName("facebook")]
-        public Facebook[] facebook { get; set; }
-
-        [JsonPropertyName("wiki")]
-        public Wiki[] wiki { get; set; }
-
-        [JsonPropertyName("instagram")]
-        public Instagram[] instagram { get; set; }
-
-        [JsonPropertyName("homepage")]
-        public Homepage[] homepage { get; set; }
-    }
-
-    public class Twitter
-    {
-        [JsonPropertyName("url")]
-        public string url { get; set; }
-    }
-
-    public class Facebook
-    {
-        [JsonPropertyName("url")]
-        public string url { get; set; }
-    }
-
-    public class Wiki
-    {
-        [JsonPropertyName("url")]
-        public string url { get; set; }
-    }
-
-    public class Instagram
-    {
-        [JsonPropertyName("url")]
-        public string url { get; set; }
-    }
-
-    public class Homepage
-    {
-        [JsonPropertyName("url")]
-        public string url { get; set; }
+        public string Latitude { get; set; }
     }
 }

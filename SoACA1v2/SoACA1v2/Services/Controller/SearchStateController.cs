@@ -3,22 +3,22 @@ using SoACA1v2.Services.StateManagement;
 
 namespace SoACA1v2.Services.Controller;
 
-public class TicketMasterController : IDisposable
+public class SearchStateController : IDisposable
 {
-    private readonly TicketMasterSearchStateService _searchState;
-    private readonly TicketMasterEventStateService _eventsState;
-    private readonly TicketMasterClient _client;
+    private readonly SearchStateService _searchState;
+    private readonly EventStateService _eventsState;
+    private readonly TicketMasterClient _ticketMasterClient;
     private CancellationTokenSource? _debounceCts;
 
-    public TicketMasterController(
-        TicketMasterSearchStateService searchState,
-        TicketMasterEventStateService eventsState,
-        TicketMasterClient client)
+    public SearchStateController(
+        SearchStateService searchState,
+        EventStateService eventsState,
+        TicketMasterClient ticketMasterClient)
     {
         Console.WriteLine("Initializing controller state");
         _searchState = searchState;
         _eventsState = eventsState;
-        _client = client;
+        _ticketMasterClient = ticketMasterClient;
         _searchState.OnChange += OnSearchStateChanged;
         _ = FetchEventsAsync();
     }
@@ -29,7 +29,6 @@ public class TicketMasterController : IDisposable
         _debounceCts?.Cancel();
         _debounceCts = new CancellationTokenSource();
         var token = _debounceCts.Token;
-
         try
         {
             await Task.Delay(200,token);
@@ -49,14 +48,14 @@ public class TicketMasterController : IDisposable
         {
             _eventsState.IsLoading = true;
 
-            var data = await _client.GetEvents(
+            var data = await _ticketMasterClient.GetEvents(
                 _searchState.SelectedCountry.Code,
                 _searchState.SelectedGenre.Id,
                 _searchState.StartDate,
                 _searchState.EndDate,
                 _searchState.Keywords);
 
-            var events = data?._embedded?.events?.ToList() ?? new List<Events>();
+            var events = data?.Embedded?.Events?.ToList() ?? new List<Events>();
             _eventsState.Events = events;
         }
         catch (Exception ex)

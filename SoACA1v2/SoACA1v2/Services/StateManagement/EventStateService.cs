@@ -2,12 +2,25 @@ using SoACA1v2.DataModels;
 
 namespace SoACA1v2.Services.StateManagement;
 
-public class TicketMasterEventStateService
+public class EventStateService
 {
         private bool isLoading;
         private List<Events>? events;
         private string? errorMessage;
+        private int? eventToLocateIndex;
+        public event Action? OnEventsChanged;
+        
+        public event Action? EventToLocateChanged;
 
+        public int? EventToLocateIndex
+        {
+            get => eventToLocateIndex;
+            set
+            {
+                eventToLocateIndex = value;
+                NotifyEventSelected();
+            }
+        }
         public bool IsLoading
         {
             get => isLoading;
@@ -24,6 +37,7 @@ public class TicketMasterEventStateService
             set
             {
                 events = value;
+                OnEventsChanged?.Invoke();
                 NotifyStateChanged();
             }
         }
@@ -40,5 +54,7 @@ public class TicketMasterEventStateService
 
         public event Action? OnChange;
         private void NotifyStateChanged() => OnChange?.Invoke();
+        
+        private void NotifyEventSelected() =>  EventToLocateChanged?.Invoke();
         
 }

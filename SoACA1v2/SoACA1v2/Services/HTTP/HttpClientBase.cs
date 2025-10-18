@@ -1,4 +1,7 @@
-﻿namespace SoACA1v2.Services;
+﻿using System.Text;
+using System.Text.Json;
+
+namespace SoACA1v2.Services;
 
 public abstract class HttpClientBase
 {
@@ -16,6 +19,30 @@ public abstract class HttpClientBase
             try
             {
                 return await _http.GetFromJsonAsync<T>($"{url}");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP error calling API: {ex.Message}");
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine($"Unsupported response format: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            return default;
+        }
+        protected async Task<T?> GetAsyncWithContent<T>(string endpoint, HttpContent  content)
+        {
+            try
+            {
+                var response = await _http.PostAsync(endpoint, content);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadFromJsonAsync<T>();
             }
             catch (HttpRequestException ex)
             {

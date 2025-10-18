@@ -20,13 +20,15 @@ builder.Services.AddHttpClient<TicketMasterClient>(client =>
 
 builder.Services.AddHttpClient<GooglePlacesClient>(client =>
 {
-    client.BaseAddress = new Uri("https://places.googleapis.com/v1/places/");
+    client.BaseAddress = new Uri("https://places.googleapis.com/");
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");
 });
 
-builder.Services.AddSingleton<TicketMasterSearchStateService>();
-builder.Services.AddSingleton<TicketMasterEventStateService>();
-builder.Services.AddSingleton<TicketMasterController>();
+builder.Services.AddSingleton<SearchStateService>();
+builder.Services.AddSingleton<EventStateService>();
+builder.Services.AddSingleton<MapStateService>();
+builder.Services.AddSingleton<SearchStateController>();
+builder.Services.AddSingleton<EventController>();
 
 var app = builder.Build();
 
