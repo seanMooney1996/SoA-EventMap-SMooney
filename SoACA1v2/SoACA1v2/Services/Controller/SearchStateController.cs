@@ -1,4 +1,6 @@
 using SoACA1v2.DataModels;
+using SoACA1v2.Services.HTTP.Interfaces;
+using SoACA1v2.Services.Interfaces;
 using SoACA1v2.Services.StateManagement;
 
 namespace SoACA1v2.Services.Controller;
@@ -7,13 +9,13 @@ public class SearchStateController : IDisposable
 {
     private readonly SearchStateService _searchState;
     private readonly EventStateService _eventsState;
-    private readonly TicketMasterClient _ticketMasterClient;
+    private readonly ITicketMasterClient _ticketMasterClient;
     private CancellationTokenSource? _debounceCts;
 
     public SearchStateController(
         SearchStateService searchState,
         EventStateService eventsState,
-        TicketMasterClient ticketMasterClient)
+        ITicketMasterClient ticketMasterClient)
     {
         Console.WriteLine("Initializing controller state");
         _searchState = searchState;
@@ -55,7 +57,9 @@ public class SearchStateController : IDisposable
                 _searchState.EndDate,
                 _searchState.Keywords);
 
-            var events = data?.Embedded?.Events?.ToList() ?? new List<Events>();
+            var events = data?.Embedded?.Events?.ToList() ?? new List<Event>();
+            // sort events using compareTo in Event class
+            events.Sort();
             _eventsState.Events = events;
         }
         catch (Exception ex)

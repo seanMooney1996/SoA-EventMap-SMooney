@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using System.Text.Json;
+using SoACA1v2.Services.Interfaces;
 
 namespace SoACA1v2.Services;
 
 using SoACA1v2.DataModels;
 using System.Net.Http.Json;
 
-public class GooglePlacesClient : HttpClientBase
+public class GooglePlacesClient : HttpClientBase, IGooglePlacesClient
 {
     public GooglePlacesClient(HttpClient http, IConfiguration config)
         : base(http, config, "GoogleAPI") { }

@@ -5,7 +5,7 @@ namespace SoACA1v2.Services.StateManagement;
 public class EventStateService
 {
         private bool isLoading;
-        private List<Events>? events;
+        private List<Event>? events;
         private string? errorMessage;
         private int? eventToLocateIndex;
         public event Action? OnEventsChanged;
@@ -31,7 +31,7 @@ public class EventStateService
             }
         }
 
-        public List<Events>? Events
+        public List<Event>? Events
         {
             get => events;
             set
