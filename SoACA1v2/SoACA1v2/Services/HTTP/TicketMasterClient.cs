@@ -1,9 +1,11 @@
 ﻿using SoACA1v2.DataModels;
 using System.Net.Http.Json;
+using SoACA1v2.Services.HTTP.Interfaces;
+using SoACA1v2.Services.Interfaces;
 
 namespace SoACA1v2.Services
 {
-    public class TicketMasterClient : HttpClientBase
+    public class TicketMasterClient : HttpClientBase , ITicketMasterClient
     {
         public TicketMasterClient(HttpClient http, IConfiguration config)
             : base(http, config, "TicketMasterAPI") { }

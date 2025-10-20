@@ -1,8 +1,8 @@
-using GoogleMapsComponents;
 using SoACA1v2.Components;
-using Microsoft.Extensions.Configuration;
 using SoACA1v2.Services;
 using SoACA1v2.Services.Controller;
+using SoACA1v2.Services.HTTP.Interfaces;
+using SoACA1v2.Services.Interfaces;
 using SoACA1v2.Services.StateManagement;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,13 +12,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddBlazorBootstrap();
 
-builder.Services.AddHttpClient<TicketMasterClient>(client =>
+builder.Services.AddHttpClient<ITicketMasterClient,TicketMasterClient>(client =>
 {
     client.BaseAddress = new Uri("https://app.ticketmaster.com/discovery/v2/");
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");
 });
 
-builder.Services.AddHttpClient<GooglePlacesClient>(client =>
+builder.Services.AddHttpClient<IGooglePlacesClient,GooglePlacesClient>(client =>
 {
     client.BaseAddress = new Uri("https://places.googleapis.com/");
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; SoACA1v2/1.0)");

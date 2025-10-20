@@ -26,8 +26,13 @@
                      class="card-img-top event-img" />
                 <CardBody>
                     <CardTitle>@e.Name</CardTitle>
+                    <CardText>@e.Embedded.Venues[0].City.Name</CardText>
+                    <CardText>@e.Embedded.Venues[0].Name</CardText>
                     <CardText>@e.Dates?.Start?.LocalDate</CardText>
-                    <Button Color="ButtonColor.Primary"  @onclick="((args) => FindEventClicked(args,index ))" >Map</Button>
+                    @if (!string.IsNullOrEmpty(@e.Embedded.Venues[0].Name))
+                    {
+                        <Button Color="ButtonColor.Primary"  @onclick="((args) => FindEventClicked(args,index ))" >Map</Button>
+                    }
                 </CardBody>
             </Card>
         }
@@ -40,7 +45,7 @@
 </div>
 
 @code {
-    private List<Events>? Events;
+    private List<Event>? Events;
     private bool IsLoading;
     private string? ErrorMessage;
 
@@ -67,7 +72,7 @@
 
     private void SyncState()
     {
-        Events = EventStateService.Events ?? new List<Events>();
+        Events = EventStateService.Events ?? new List<Event>();
         IsLoading = EventStateService.IsLoading;
         ErrorMessage = EventStateService.ErrorMessage;
         Console.WriteLine($"Synced state: {Events.Count} events , is Loading {IsLoading}");

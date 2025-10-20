@@ -5,58 +5,58 @@ namespace SoACA1v2.Services;
 
 public abstract class HttpClientBase
 {
-        protected readonly HttpClient _http;
-        protected readonly string _apiKey;
+    private readonly HttpClient _http;
+    protected readonly string _apiKey;
 
-        protected HttpClientBase(HttpClient http, IConfiguration config, string keyName)
+    protected HttpClientBase(HttpClient http, IConfiguration config, string keyName)
+    {
+        _http = http;
+        _apiKey = config[$"Keys:{keyName}"] ?? string.Empty;
+    }
+    
+    protected async Task<T?> GetAsync<T>(string url)
+    {
+        try
         {
-            _http = http;
-            _apiKey = config[$"Keys:{keyName}"] ?? string.Empty;
+            return await _http.GetFromJsonAsync<T>($"{url}");
         }
-        
-        protected async Task<T?> GetAsync<T>(string url)
+        catch (HttpRequestException ex)
         {
-            try
-            {
-                return await _http.GetFromJsonAsync<T>($"{url}");
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"HTTP error calling API: {ex.Message}");
-            }
-            catch (NotSupportedException ex)
-            {
-                Console.WriteLine($"Unsupported response format: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Unexpected error: {ex.Message}");
-            }
-
-            return default;
+            Console.WriteLine($"HTTP error calling API: {ex.Message}");
         }
-        protected async Task<T?> GetAsyncWithContent<T>(string endpoint, HttpContent  content)
+        catch (NotSupportedException ex)
         {
-            try
-            {
-                var response = await _http.PostAsync(endpoint, content);
-                response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadFromJsonAsync<T>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"HTTP error calling API: {ex.Message}");
-            }
-            catch (NotSupportedException ex)
-            {
-                Console.WriteLine($"Unsupported response format: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Unexpected error: {ex.Message}");
-            }
-
-            return default;
+            Console.WriteLine($"Unsupported response format: {ex.Message}");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+
+        return default;
+    }
+    protected async Task<T?> GetAsyncWithContent<T>(string endpoint, HttpContent  content)
+    {
+        try
+        {
+            var response = await _http.PostAsync(endpoint, content);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"HTTP error calling API: {ex.Message}");
+        }
+        catch (NotSupportedException ex)
+        {
+            Console.WriteLine($"Unsupported response format: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+
+        return default;
+    }
 }

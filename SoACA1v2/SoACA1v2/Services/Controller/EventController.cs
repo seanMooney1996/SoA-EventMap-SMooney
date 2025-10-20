@@ -2,6 +2,7 @@ using System.Globalization;
 using BlazorBootstrap;
 using LeafletForBlazor.RealTime.polygons;
 using SoACA1v2.DataModels;
+using SoACA1v2.Services.Interfaces;
 using SoACA1v2.Services.StateManagement;
 
 namespace SoACA1v2.Services.Controller;
@@ -10,14 +11,14 @@ public class EventController : IDisposable
 {
     private readonly EventStateService _eventsState;
     private readonly MapStateService _mapState;
-    private readonly GooglePlacesClient _googlePlacesClient;
+    private readonly IGooglePlacesClient _googlePlacesClient;
     private CancellationTokenSource? _debounceCts;
     private bool _isFetchingVenues = false;
     
     public EventController(
         EventStateService eventsState,
         MapStateService mapState,
-        GooglePlacesClient googlePlacesClient)
+        IGooglePlacesClient googlePlacesClient)
     {
         Console.WriteLine("Initializing event controller state");
         _eventsState = eventsState;
@@ -106,7 +107,7 @@ public class EventController : IDisposable
     }
     
     // Partse event and location data into marker for maps
-     private static GoogleMapMarker? CreateMarkerFromEvent(Events ev, GoogleLocations.Root? locationResult)
+     private static GoogleMapMarker? CreateMarkerFromEvent(Event ev, GoogleLocations.Root? locationResult)
     {
         string eventName = ev.Name ?? "Unnamed Event";
         string date = ev.Dates?.Start?.LocalDate ?? "TBA";
@@ -199,6 +200,8 @@ public class EventController : IDisposable
        double latDiff = maxLat - minLat;
        double lngDiff = maxLng - minLng;
        double maxDiff = Math.Max(latDiff, lngDiff);
+       
+       Console.WriteLine("max dif for lat and longs - "+maxDiff);
 
        int zoom = maxDiff switch
        {
@@ -207,13 +210,9 @@ public class EventController : IDisposable
            > 10 => 4,
            > 5 => 5,
            > 2 => 6,
-           > 1 => 7,
-           > 0.5 => 8,
-           > 0.25 => 9,
-           > 0.1 => 10,
-           > 0.05 => 11,
-           _ => 12  
+            _ => 7,
        };
+       Console.WriteLine($"New center - {centerLat}, {centerLng} - zoom: " + zoom);
        return (centerLat, centerLng, zoom);
    }
 
