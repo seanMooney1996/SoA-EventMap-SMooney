@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoACA1v2", "SoACA1v2\SoACA1v2.csproj", "{BB8B0D37-9ADA-4D09-A892-90AF27600892}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoCA1v2Test", "SoCA1v2Test\SoCA1v2Test.csproj", "{E242766B-88FE-4D59-A078-A3931AFDACE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{BB8B0D37-9ADA-4D09-A892-90AF27600892}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB8B0D37-9ADA-4D09-A892-90AF27600892}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB8B0D37-9ADA-4D09-A892-90AF27600892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E242766B-88FE-4D59-A078-A3931AFDACE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E242766B-88FE-4D59-A078-A3931AFDACE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E242766B-88FE-4D59-A078-A3931AFDACE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E242766B-88FE-4D59-A078-A3931AFDACE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

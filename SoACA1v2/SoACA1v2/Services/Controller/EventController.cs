@@ -205,12 +205,12 @@ public class EventController : IDisposable
 
        int zoom = maxDiff switch
        {
-           > 40 => 2,   
-           > 20 => 3,
-           > 10 => 4,
-           > 5 => 5,
-           > 2 => 6,
-            _ => 7,
+           > 40 => (int)Zoom.SHORTEST,   
+           > 20 => (int)Zoom.SHORT,
+           > 10 => (int)Zoom.LOWERMEDIUM,
+           > 5 => (int)Zoom.UPPERMEDIUM,
+           > 2 => (int)Zoom.LONG,
+            _ => (int)Zoom.LONGEST,
        };
        Console.WriteLine($"New center - {centerLat}, {centerLng} - zoom: " + zoom);
        return (centerLat, centerLng, zoom);
@@ -221,5 +221,12 @@ public class EventController : IDisposable
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         _eventsState.OnEventsChanged -= OnEventStateChanged;
+    }
+    
+    
+
+    private enum Zoom
+    {
+        SHORTEST=2,SHORT=3,LOWERMEDIUM=4,UPPERMEDIUM=5,LONG=6,LONGEST=7
     }
 }
