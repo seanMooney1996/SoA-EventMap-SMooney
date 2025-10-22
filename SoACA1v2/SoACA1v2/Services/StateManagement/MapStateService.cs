@@ -8,7 +8,7 @@ namespace SoACA1v2.Services.StateManagement;
 public class MapStateService
 {
     private bool isLoading;
-    private List<GoogleMapMarker>? markers;
+    private List<GoogleMapMarker>? markers = null;
     private GoogleMapCenter? googleMapCenter = new GoogleMapCenter(11,11);
     private string? errorMessage;
     private string? zoom = "8";
