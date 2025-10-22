@@ -179,7 +179,7 @@ public class EventController : IDisposable
    // on how to figure out center lat long in list of lat long
    // To find the center we just find the halfway point between both the min and max of both the latitudes and longitudes for each map marker.
    // To work out zoom level we find the biggest difference among longs and lats, and mapped a zoom level based on what that distance was using the switch.
-   private (double lat, double longt, int zoom) GetCenterAndZoom(List<GoogleMapMarker> markers)
+   internal (double lat, double longt, int zoom) GetCenterAndZoom(List<GoogleMapMarker> markers)
    {
        double minLat = double.MaxValue, maxLat = double.MinValue;
        double minLng = double.MaxValue, maxLng = double.MinValue;
