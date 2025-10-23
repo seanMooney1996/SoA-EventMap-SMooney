@@ -4,7 +4,7 @@ using NUnit.Framework.Internal.Execution;
 using SoACA1v2.DataModels;
 
 namespace SoACA1v2.Services.StateManagement;
-
+//Map State representing the state inside the google map component
 public class MapStateService
 {
     private bool isLoading;

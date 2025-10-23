@@ -2,6 +2,9 @@
 
 namespace SoACA1v2.Services.StateManagement
 {
+    // State representing the state inside the search component. Notifies any controller that relies on search, for example 
+    // Will let the search state controller know that the user has input a new genre, and fetch from ticket master with 
+    // params from this state
     public class SearchStateService
     {
         private GenreItem selectedGenre = new();

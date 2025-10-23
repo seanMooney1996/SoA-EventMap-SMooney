@@ -2,18 +2,17 @@ using System.Globalization;
 using BlazorBootstrap;
 using LeafletForBlazor.RealTime.polygons;
 using SoACA1v2.DataModels;
-using SoACA1v2.Services.Interfaces;
+using SoACA1v2.Services.HTTP.Interfaces;
 using SoACA1v2.Services.StateManagement;
 
 namespace SoACA1v2.Services.Controller;
 
+// This controllers listens for changes in events and calls appropriate functions depending on what state has changed in EventState
 public class EventController : IDisposable
 {
     private readonly EventStateService _eventsState;
     private readonly MapStateService _mapState;
     private readonly IGooglePlacesClient _googlePlacesClient;
-    private CancellationTokenSource? _debounceCts;
-    private bool _isFetchingVenues = false;
     
     public EventController(
         EventStateService eventsState,
@@ -28,6 +27,8 @@ public class EventController : IDisposable
         _eventsState.EventToLocateChanged += OnEventToLocateChanged;
     }
 
+    //When a user clicks to locate an event in the event component, event to locate state changes and this controller calls this function 
+    // to update the map state to zoom on the location of where the marker for that event is. 
     private void OnEventToLocateChanged()
     {
         Console.WriteLine("EventToLocateChanged");
@@ -59,7 +60,8 @@ public class EventController : IDisposable
             Console.WriteLine($"Failed to retrieve venues: {ex.Message}");
         }
     }
-    
+
+    // Fetch venues and create markers for each event retrieved, is called when event list is updated in event component state
     private async Task FetchVenuesAsync()
     {
         _mapState.IsLoading = true;
@@ -106,7 +108,7 @@ public class EventController : IDisposable
         _mapState.IsLoading = false; 
     }
     
-    // Partse event and location data into marker for maps
+    // Parse single event and location result into marker for map ui
      private static GoogleMapMarker? CreateMarkerFromEvent(Event ev, GoogleLocations.Root? locationResult)
     {
         string eventName = ev.Name ?? "Unnamed Event";
@@ -176,7 +178,7 @@ public class EventController : IDisposable
     }
     
    // https://stackoverflow.com/questions/35645423/how-to-get-center-pointlatlng-between-some-locations
-   // on how to figure out center lat long in list of lat long
+   // on how to figure out center lat and long from a list of lat and long
    // To find the center we just find the halfway point between both the min and max of both the latitudes and longitudes for each map marker.
    // To work out zoom level we find the biggest difference among longs and lats, and mapped a zoom level based on what that distance was using the switch.
    internal (double lat, double longt, int zoom) GetCenterAndZoom(List<GoogleMapMarker> markers)
@@ -216,15 +218,14 @@ public class EventController : IDisposable
        return (centerLat, centerLng, zoom);
    }
 
+   // dispose of subscribers on cleanup
     public void Dispose()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
         _eventsState.OnEventsChanged -= OnEventStateChanged;
     }
     
     
-
+    // Enum to represent zoom level depending on the difference between two points that are farthest away.
     private enum Zoom
     {
         SHORTEST=2,SHORT=3,LOWERMEDIUM=4,UPPERMEDIUM=5,LONG=6,LONGEST=7

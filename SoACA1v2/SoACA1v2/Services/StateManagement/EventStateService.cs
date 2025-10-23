@@ -2,15 +2,18 @@ using SoACA1v2.DataModels;
 
 namespace SoACA1v2.Services.StateManagement;
 
+// state object representing state in the event layout
 public class EventStateService
 {
         private bool isLoading;
         private List<Event>? events;
         private string? errorMessage;
         private int? eventToLocateIndex;
-        public event Action? OnEventsChanged;
         
+        // these 'events' are subscribed to. Anything subscribed to these events are notified on a change.
+        public event Action? OnEventsChanged;
         public event Action? EventToLocateChanged;
+        public event Action? OnChange;
 
         public int? EventToLocateIndex
         {
@@ -52,7 +55,7 @@ public class EventStateService
             }
         }
 
-        public event Action? OnChange;
+
         private void NotifyStateChanged() => OnChange?.Invoke();
         
         private void NotifyEventSelected() =>  EventToLocateChanged?.Invoke();

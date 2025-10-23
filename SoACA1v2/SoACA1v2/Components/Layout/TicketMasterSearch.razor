@@ -91,11 +91,14 @@
         set => SearchStateService.EndDate = value;
     }
 
+    // subscribe to search state service on change to render ui on change
     protected override async Task OnInitializedAsync()
     {
         SearchStateService.OnChange += StateHasChanged;
 
+        // Load genre for dropdown from json 
         await LoadGenres();
+        // Load countries for dropdown from json 
         await LoadCountries();
 
         GenreName = SearchStateService.SelectedGenre?.Name;
@@ -145,7 +148,8 @@
             Console.WriteLine($"Error loading countries: {ex.Message}");
         }
     }
-
+    
+  // functions required to fill bootstrap autocomplete 
     private async Task<AutoCompleteDataProviderResult<GenreItem>> GenresDataProvider(AutoCompleteDataProviderRequest<GenreItem> request)
         => await Task.FromResult(request.ApplyTo(GenreList.OrderBy(g => g.Name)));
 

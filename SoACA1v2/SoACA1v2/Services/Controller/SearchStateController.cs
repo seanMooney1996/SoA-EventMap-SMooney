@@ -1,10 +1,11 @@
 using SoACA1v2.DataModels;
 using SoACA1v2.Services.HTTP.Interfaces;
-using SoACA1v2.Services.Interfaces;
 using SoACA1v2.Services.StateManagement;
 
 namespace SoACA1v2.Services.Controller;
 
+
+// This controllers sole responsibility is to call ticketmasterclient when search state is changed
 public class SearchStateController : IDisposable
 {
     private readonly SearchStateService _searchState;

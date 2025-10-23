@@ -1,6 +1,6 @@
 using SoACA1v2.DataModels;
 
-namespace SoACA1v2.Services.Interfaces;
+namespace SoACA1v2.Services.HTTP.Interfaces;
 
 public interface IGooglePlacesClient
 {
