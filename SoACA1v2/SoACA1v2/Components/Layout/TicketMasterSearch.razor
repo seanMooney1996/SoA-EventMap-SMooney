@@ -6,59 +6,64 @@
 @inject SearchStateService SearchStateService
 @using System.Text.Json
 @rendermode InteractiveServer
-<div class="card shadow-sm p-3 search-card">
-    <div class="row">
-        <div class="col col75">
-            <label class="form-label fw-semibold">Keywords</label>
-            <TextInput @bind-Value="@Keywords"
-                       Placeholder="Enter keywords..."
-                       Class="form-control" />
-        </div>
-        <div class="col col25">
-            <label class="form-label fw-semibold">Genre</label>
-            <div class="input-group">
-                <AutoComplete @bind-Value="GenreName"
-                              TItem="GenreItem"
-                              DataProvider="GenresDataProvider"
-                              PropertyName="Name"
-                              Placeholder="Select a genre..."
-                              OnChanged="OnGenreSelected" 
-                              Class="auto-comp" />
-                <button class="btn btn-outline-secondary btn-search" type="button" @onclick="ClearGenre">
-                    Clear
-                </button>
+<div style="height:100%; display:flex;flex-direction: column; justify-content: flex-end;">
+    <h2 style="color:#4285f4">Search for Events</h2>
+    <div class="card shadow-sm search-card">
+        <div class="row">
+            <div class="col col75">
+                <label class="form-label fw-semibold">Keywords</label>
+                <TextInput @bind-Value="@Keywords"
+                           Placeholder="Enter keywords..."
+                           Class="form-control"/>
+            </div>
+            <div class="col ">
+                <label class="form-label fw-semibold">Genre</label>
+                <div class="input-grouped">
+                    <AutoComplete @bind-Value="GenreName"
+                                  TItem="GenreItem"
+                                  DataProvider="GenresDataProvider"
+                                  PropertyName="Name"
+                                  Placeholder="Select a genre..."
+                                  OnChanged="OnGenreSelected"
+                                  Class="auto-comp"/>
+                    <button class="btn btn-outline-secondary btn-search" type="button" @onclick="ClearGenre">
+                        Clear
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="row">
-        <div class="col col50">
-            <label class="form-label fw-semibold">Country</label>
-            <div class="input-group">
-                <AutoComplete @bind-Value="CountryName"
-                              TItem="CountryItem"
-                              DataProvider="CountryDataProvider"
-                              PropertyName="Name"
-                              Placeholder="Select a country..."
-                              OnChanged="OnCountrySelected" />
-                <button class="btn btn-outline-secondary" type="button" @onclick="ClearCountry">
-                    Clear
-                </button>
+
+        <div class="row">
+            <div class="col col50">
+                <label class="form-label fw-semibold">Country</label>
+                <div class="input-grouped">
+                    <AutoComplete @bind-Value="CountryName"
+                                  TItem="CountryItem"
+                                  DataProvider="CountryDataProvider"
+                                  PropertyName="Name"
+                                  Placeholder="Select a country..."
+                                  OnChanged="OnCountrySelected"/>
+                    <button class="btn btn-outline-secondary" type="button" @onclick="ClearCountry">
+                        Clear
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="col col25">
-            <label class="form-label fw-semibold">Start Date</label>
-            <DateInput TValue="DateOnly"
-                       @bind-Value="StartDate"
-                       Placeholder="Start date"
-                       Class="form-control-date" />
-        </div>
-        <div class="col col25">
-            <label class="form-label fw-semibold">End Date</label>
-            <DateInput TValue="DateOnly"
-                       @bind-Value="EndDate"
-                       Placeholder="End date"
-                       Class="form-control-date" />
+            <div class="col col50" style="display:flex;justify-content: space-between;">
+            <div class="col" style="max-width: 49%">
+                <label class="form-label fw-semibold">Start Date</label>
+                <DateInput TValue="DateOnly"
+                           @bind-Value="StartDate"
+                           Placeholder="Start date"
+                           Class="form-control-date"/>
+            </div>
+            <div class="col" style="max-width: 49%">
+                <label class="form-label fw-semibold">End Date</label>
+                <DateInput TValue="DateOnly"
+                           @bind-Value="EndDate"
+                           Placeholder="End date"
+                           Class="form-control-date"/>
+            </div>
+            </div>
         </div>
     </div>
 </div>
@@ -169,9 +174,8 @@
     }
 }
 <style>
-    .col25 {
-        width: 25%;
-        max-width: 25%;
+    label {
+        max-height:40%;
     }
     .col25 input {
         width: 95%!important;
@@ -180,7 +184,7 @@
         width: 50%;
     }
     .col75 {
-        width: 75%;
+        max-width: 70%;
     }
     .col75 .form-control {
         width: 98%!important;
@@ -203,9 +207,11 @@
         justify-content: flex-start;
     }
     .search-card {
-        background-color: #fff;
+        background-color: rgba(255, 255, 255, 0.6);
         border-radius: 12px;
-        padding: 1.5rem;
+        height: 85%;
+        padding-left:18px;
+        padding-right:18px;
     }
 
     .form-label {
@@ -216,32 +222,39 @@
         margin:0!important;
     }
 
-    .input-group{
+    .input-grouped{
+        height:60%;
+        max-height:60%;
         position: relative;
         display: flex;
-        align-items: center;
-        width: 100%;
+        width: 98%;
         flex-direction: row;
-        justify-content: center;
-        align-content: center;
         flex-wrap: nowrap;
+        justify-content: flex-start;
+        button {
+            max-height:60% !important;
+            padding: 0 !important;
+            width:20%;
+        }
     }
     .input-group- .auto-comp {
         width:100%;
+        height:100%;
     }
     .form-control{
         font-size: 1rem;
         max-height: 60%;
+        height: 60%;
     }
 
     .input-group .btn {
         min-width: 70px;
         max-height: 60%;
-        width:18%;
+        width:20%;
         
     }
     .input-group input {
-        width:78%!important;
+        width:80%!important;
     }
     
     .form-control-date input {

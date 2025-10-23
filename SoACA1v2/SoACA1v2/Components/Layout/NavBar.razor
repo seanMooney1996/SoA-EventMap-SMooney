@@ -1,0 +1,72 @@
+<nav class="navbar">
+    <div>
+        <h4 style="color:#00bfa5;">Sean Mooney</h4>
+    </div>
+    <div class="logo">
+        <span class="logo-main">Music</span><span class="logo-accent">Event</span>Finder
+    </div>
+
+    <div class="nav-links">
+        <a href="https://www.ticketmaster.ie">Ticket Master</a>
+        <a href="https://www.google.com/maps" asp-action="Index">Google Maps</a>
+        <a href="https://github.com/seanMooney1996/SoA-EventMap-SMooney" asp-action="Index">Github Repository</a>
+    </div>
+</nav>
+
+@code {
+    
+}
+<style>
+    .logo {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 50px;
+        letter-spacing: 0.5px;
+        color: #fff;
+        user-select: none;
+    }
+
+    .logo-main {
+        color: #fff; 
+    }
+
+    .logo-accent {
+        color: #00bfa5; 
+    }
+    .navbar {
+        height:10vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.6rem 2rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-logo {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .nav-links a {
+        color: #f0f0f0;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+        color: #ffffff;
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+</style>
