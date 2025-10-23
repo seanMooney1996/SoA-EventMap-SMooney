@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json;
-using SoACA1v2.Services.Interfaces;
-
-namespace SoACA1v2.Services;
-
 using SoACA1v2.DataModels;
-using System.Net.Http.Json;
+using SoACA1v2.Services.HTTP.Interfaces;
 
+namespace SoACA1v2.Services.HTTP;
+
+// Client which uses abstract HTTPClientBase, and implements the Interface IGooglePlacesClient
+// Responsible for fetching venues 
 public class GooglePlacesClient : HttpClientBase, IGooglePlacesClient
 {
     public GooglePlacesClient(HttpClient http, IConfiguration config)

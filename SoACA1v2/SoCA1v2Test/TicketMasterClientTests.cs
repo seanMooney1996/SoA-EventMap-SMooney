@@ -5,6 +5,7 @@ using Moq;
 using Moq.Protected;
 using SoACA1v2.DataModels;
 using SoACA1v2.Services;
+using SoACA1v2.Services.HTTP;
 
 namespace SoCA1v2Test;
 

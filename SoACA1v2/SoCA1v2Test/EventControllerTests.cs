@@ -4,7 +4,7 @@ using Moq;
 using Moq.Protected;
 using SoACA1v2.DataModels;
 using SoACA1v2.Services.Controller;
-using SoACA1v2.Services.Interfaces;
+using SoACA1v2.Services.HTTP.Interfaces;
 using SoACA1v2.Services.StateManagement;
 using SoCA1v2Test.fakeObjects;
 

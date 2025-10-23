@@ -1,9 +1,11 @@
 ﻿using SoACA1v2.DataModels;
-using System.Net.Http.Json;
 using SoACA1v2.Services.HTTP.Interfaces;
-using SoACA1v2.Services.Interfaces;
 
-namespace SoACA1v2.Services
+
+
+// Client which uses abstract HTTPClientBase, and implements the Interface ITicketMasterClient
+// Responsible for fetching Events with params from the search state
+namespace SoACA1v2.Services.HTTP
 {
     public class TicketMasterClient : HttpClientBase , ITicketMasterClient
     {
@@ -20,7 +22,7 @@ namespace SoACA1v2.Services
 
             if (!string.IsNullOrWhiteSpace(countryCode))
                 queryParams.Add($"countryCode={countryCode}");
-
+            // A default param for when the user has yet to use the search component
             if (string.IsNullOrWhiteSpace(genreId) && string.IsNullOrWhiteSpace(keyword) && string.IsNullOrWhiteSpace(countryCode))
             {
                 queryParams.Add($"countryCode=IE");

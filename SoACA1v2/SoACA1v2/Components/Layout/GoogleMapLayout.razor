@@ -32,14 +32,19 @@
     
     protected override void OnInitialized()
     {
+        // subscribe the the map state service
+        // call sync state to grab all default state before rendering UI
         MapStateService.OnChange += OnEventStateChanged;
         SyncState();
     }
+    
     protected override async Task OnInitializedAsync()
     {
+        // Set the API key in map component, needed for rendering
         ApiKey = Configuration["Keys:GoogleAPI"] ?? "";
     }
     
+    // called when any state is changed in map state service
     private async void OnEventStateChanged()
     {
         await InvokeAsync(() =>

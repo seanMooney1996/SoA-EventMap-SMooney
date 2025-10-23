@@ -1,8 +1,6 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿namespace SoACA1v2.Services.HTTP;
 
-namespace SoACA1v2.Services;
-
+// Abstract base client to handle try catch and key assignment
 public abstract class HttpClientBase
 {
     private readonly HttpClient _http;
